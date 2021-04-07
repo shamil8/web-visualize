@@ -15,16 +15,44 @@
             width="180" />
       </el-table>
     </section>
+
+    <h2>Chart examples</h2>
+    <section>
+      <h4>1. Bar chart</h4>
+      <BarChart class="bar-chart" />
+
+      <h4>2. Line chart</h4>
+      <LineChart class="line-chart" />
+
+      <h4>3. Pie chart</h4>
+      <PieChart class="pie-chart" />
+
+      <h4>4. Bubble chart</h4>
+      <BubbleChart class="bubble-chart" />
+
+      <h4>5. Dough-nut chart</h4>
+      <DoughnutChart class="doughnut-chart" />
+    </section>
   </div>
 </template>
 
 <script>
 import CsvLoader from '@/components/CsvLoader'
+import BarChart from '@/components/charts/Bar'
+import LineChart from '@/components/charts/Line'
+import PieChart from '@/components/charts/Pie'
+import BubbleChart from '@/components/charts/Bubble'
+import DoughnutChart from '@/components/charts/Doughnut'
 
 export default {
   name: 'App',
   components: {
     CsvLoader,
+    BarChart,
+    LineChart,
+    PieChart,
+    BubbleChart,
+    DoughnutChart
   },
   data () {
     return {
@@ -66,5 +94,14 @@ export default {
 .table-container {
   max-width: 1000px;
   margin: 0 auto;
+}
+
+/* Charts containers */
+.line-chart, .pie-chart, .bubble-chart, .doughnut-chart {
+  margin-bottom: 35px;
+}
+
+h4 {
+  margin-bottom: 5px;
 }
 </style>
