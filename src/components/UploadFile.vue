@@ -1,16 +1,15 @@
 <template>
   <el-upload
-      class="upload-demo"
-      action="https://jsonplaceholder.typicode.com/posts/"
-      :on-preview="handlePreview"
+      action="https://adab.tj/udate/"
+      :on-change="handleChange"
       :on-remove="handleRemove"
       :before-remove="beforeRemove"
-      multiple
-      :limit="3"
-      :on-exceed="handleExceed"
-      :file-list="fileList">
-    <el-button size="small" type="primary">Выбрать .csv файл</el-button>
-    <div slot="tip" class="el-upload__tip">csv files with a size less than 20mb</div>
+      :auto-upload="false"
+  >
+    <template v-if="!isChose">
+      <el-button size="small" type="primary">Выбрать .csv файл</el-button>
+      <div slot="tip" class="el-upload__tip">csv files with a size less than 20mb</div>
+    </template>
   </el-upload>
 </template>
 
@@ -19,31 +18,23 @@ export default {
   name: 'UploadFile.vue',
   data() {
     return {
-      fileList: [
-        {
-            name: 'food.jpeg',
-            url: 'https://fuss10.elemecdn.com/3/63/4e7f3a15429bfda99bce42a18cdd1jpeg.jpeg?imageMogr2/thumbnail/360x360/format/webp/quality/100'
-        },
-        {
-          name: 'food2.jpeg',
-          url: 'https://fuss10.elemecdn.com/3/63/4e7f3a15429bfda99bce42a18cdd1jpeg.jpeg?imageMogr2/thumbnail/360x360/format/webp/quality/100'
-        }
-      ]
+      isChose: false
     }
   },
   methods: {
     handleRemove(file, fileList) {
-      console.log('Shamil Alizode')
+      console.log('Removing a file...')
       console.log(file, fileList)
+      this.isChose = false
     },
-    handlePreview(file) {
-      console.log(file)
-    },
-    handleExceed(files, fileList) {
-      this.$message.warning(`The limit is 3, you selected ${files.length} files this time, add up to ${files.length + fileList.length} totally`)
+    handleChange(file, uploadFiles) {
+      this.isChose = true
+      console.log('Choose file', file)
+      console.log('uploadFiles', uploadFiles)
+
     },
     beforeRemove(file) {
-      return this.$confirm(`Cancel the transfert of ${ file.name } ?`)
+      return this.$confirm(`Удалить файл ${ file.name } ?`)
     }
   }
 }
