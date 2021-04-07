@@ -44,7 +44,7 @@ export default {
     },
     uploadButtonText: {
       type: String,
-      default: 'Choose file...',
+      default: 'Chose file: ',
       required: false
     }
   },
@@ -59,46 +59,40 @@ export default {
     };
   },
   methods: {
-    onCheckBoxCheck: function() {},
-    uploaded: function(e) {
+    onCheckBoxCheck() {},
+    uploaded(e) {
       const file = e.target && e.target.files && e.target.files[0]
       if (file) {
-        this.fileName = file.name;
+        this.fileName = file.name
         this.loadCsv(file, sjisData => {
-          const lineArray = sjisData.split("\r")
+          const lineArray = sjisData.split('\r')
           const itemArray = []
           let header = []
           let body = []
           for (let i = 0; i < lineArray.length; i++) {
-            itemArray[i] = lineArray[i].split(",")
+            itemArray[i] = lineArray[i].split(',')
           }
           if (this.headerRowCount > 0) {
-            header = itemArray.slice(0, this.headerRowCount);
+            header = itemArray.slice(0, this.headerRowCount)
             body = itemArray.slice(this.headerRowCount, itemArray.length - 1)
           } else {
-            body = itemArray;
+            body = itemArray
           }
-          this.$emit("loadSuccess", {
-            csvHeader: header,
-            csvBody: body
-          });
-        });
+          this.$emit('loadSuccess', { csvHeader: header, csvBody: body })
+        })
       }
     },
-    loadCsv: function(file, callBack) {
+    loadCsv(file, callBack) {
       const reader = new FileReader()
       reader.onerror = function() {
         alert(`${file}の読み込みに失敗しました。`)
-      };
+      }
       reader.onload = () => {
-        const str = String.fromCharCode.apply(
-            "",
-            new Uint8Array(reader.result)
-        );
+        const str = String.fromCharCode.apply('', new Uint8Array(reader.result))
         const sjisData = Encoding.convert(str, {
-          to: "UNICODE",
-          from: "AUTO"
-        });
+          to: 'UNICODE',
+          from: 'AUTO'
+        })
         callBack(sjisData)
       }
       reader.readAsArrayBuffer(file)
