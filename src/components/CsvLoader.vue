@@ -11,12 +11,16 @@
     </div>
 
     <div class="field-body">
-      <el-button @click="$refs.uploadFile.click()" type="primary">Upload<i class="el-icon-upload el-icon-right"></i></el-button>
+      <el-button :loading="loading" @click="$refs.uploadFile.click()" type="primary">
+        Upload<i class="el-icon-upload el-icon-right"></i>
+      </el-button>
       <input ref="uploadFile" v-show="false" type="file" @change="uploaded" />
       <template v-if="fileName.length">
         <span class="file-label">{{ uploadButtonText }}</span>
         <span class="file-name">{{ fileName }}</span>
       </template>
+
+      <br><br><i v-if="loading" class="el-icon-loading" />
     </div>
   </div>
 </template>
@@ -34,7 +38,7 @@ export default {
     },
     headerRowCountLabelText: {
       type: String,
-      default: 'Header Rows count',
+      default: 'Header rows count',
       required: false
     },
     uploadButtonLabelText: {
@@ -55,45 +59,45 @@ export default {
     return {
       headerRowCount: 0,
       labelHeaderRowCount: '',
-      fileName: ''
-    };
+      fileName: '',
+      loading: false
+    }
   },
   methods: {
-    onCheckBoxCheck() {},
     uploaded(e) {
       const file = e.target && e.target.files && e.target.files[0]
       if (file) {
         this.fileName = file.name
         this.loadCsv(file, sjisData => {
-          const lineArray = sjisData.split('\r')
-          const itemArray = []
-          let header = []
-          let body = []
-          for (let i = 0; i < lineArray.length; i++) {
-            itemArray[i] = lineArray[i].split(',')
-          }
-          if (this.headerRowCount > 0) {
-            header = itemArray.slice(0, this.headerRowCount)
-            body = itemArray.slice(this.headerRowCount, itemArray.length - 1)
-          } else {
-            body = itemArray
-          }
+          const arr = sjisData.split(/$/mg).filter(it => it.length > 1).map(item => item.split(','))
+          const header = this.headerRowCount > 0 ? arr.slice(0, this.headerRowCount) : []
+          const body = this.headerRowCount > 0 ? arr.slice(this.headerRowCount, arr.length - 1) : arr
+
           this.$emit('loadSuccess', { csvHeader: header, csvBody: body })
+          this.loading = false
         })
       }
     },
     loadCsv(file, callBack) {
       const reader = new FileReader()
+      this.loading = true
       reader.onerror = function() {
-        alert(`${file}の読み込みに失敗しました。`)
+        alert(`${file} Не получилось загрузить файл(;`)
       }
       reader.onload = () => {
-        const str = String.fromCharCode.apply('', new Uint8Array(reader.result))
-        const sjisData = Encoding.convert(str, {
-          to: 'UNICODE',
-          from: 'AUTO'
-        })
-        callBack(sjisData)
+        try {
+          const str = new TextDecoder().decode(new Uint8Array(reader.result))
+          const sjisData = Encoding.convert(str, {
+            to: 'UNICODE',
+            from: 'AUTO'
+          })
+
+          callBack(sjisData)
+        } catch (e) {
+          // Call stack overflow
+          this.$message.error('Файл слишком большой ;(')
+          return 1
+        }
       }
       reader.readAsArrayBuffer(file)
     }

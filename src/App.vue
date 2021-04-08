@@ -6,7 +6,7 @@
     </section>
 
     <section class="table-container">
-      <el-table v-if="csvHeader.length" :data="csvBody">
+      <el-table v-if="csvHeader.length" :data="csvBody" height="500">
         <el-table-column
             v-for="(item, idx) of this.csvHeader"
             :key="idx"
@@ -16,6 +16,7 @@
       </el-table>
     </section>
 
+    <br>
     <h2>Chart examples</h2>
     <section>
       <h4>1. Bar chart</h4>
@@ -62,12 +63,12 @@ export default {
     }
   },
   methods: {
-    loadSuccess: function(result) {
+    loadSuccess(result) {
       if (result.csvHeader) {
         this.csvHeader = Object.values(result.csvHeader[0])
         this.csvBody = result.csvBody
       } else {
-        alert('Выбранный файл пусто!')
+        this.$message.warning('Выбранный файл пусто!')
       }
     }
   }
